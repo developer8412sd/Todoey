@@ -10,11 +10,16 @@ import UIKit
 
 class TodoListTableController: UITableViewController {
 
-    let arryVlaues = ["Row 1","Row 2","Row 3"]
+    var arryVlaues = ["Row 1","Row 2","Row 3"]
+    
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            arryVlaues = items
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -33,6 +38,24 @@ class TodoListTableController: UITableViewController {
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    @IBAction func addNewTodoItem(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        let alert = UIAlertController(title: "Adding New Todo Item", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            self.arryVlaues.append(textField.text!)
+            self.defaults.set(self.arryVlaues, forKey: "TodoListArray")
+            self.tableView.reloadData()
+        }
+        alert.addAction(action)
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Enter New Task"
+            textField = alertTextField
+        }
 
+
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
 }
 
